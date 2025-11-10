@@ -1,0 +1,35 @@
+{
+    "name": "esago",
+    "short_name": "esago",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0175C2",
+    "theme_color": "#0175C2",
+    "description": "EsaGo adalah asisten akademik all-in-one resmi untuk mahasiswa Universitas Esa Unggul, dirancang untuk menyederhanakan kehidupan kampus Anda dari A sampai Z. Dari jadwal kuliah hingga administrasi UKT, semuanya ada di sini—ditambah kecerdasan buatan (AI) yang siap mendampingi studi Anda!",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}

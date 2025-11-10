@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- You can insert a solid color here -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/launch_background_color" />
+
+    <!-- Or you can insert a logo here -->
+     <item
+        android:width="120dp"
+        android:height="120dp"
+        android:gravity="center">
+        <bitmap
+            android:gravity="fill"
+            android:src="@drawable/favicon" />
+    </item>
+</layer-list>
