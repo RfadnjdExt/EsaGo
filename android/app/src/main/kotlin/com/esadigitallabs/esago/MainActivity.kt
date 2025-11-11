@@ -1,6 +1,9 @@
 package com.esadigitallabs.esago
 
-import android.content.Intent
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.os.Build
+import androidx.annotation.RequiresApi
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -8,20 +11,24 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity: FlutterActivity() {
     private val CHANNEL = "com.esadigitallabs.esago/widget"
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
             call, result ->
-            // Tidak ada method yang dipanggil dari Dart ke native saat ini
-        }
-    }
+            if (call.method == "requestPinWidget") {
+                val appWidgetManager = AppWidgetManager.getInstance(context)
+                val myProvider = ComponentName(context, ScheduleWidgetProvider::class.java)
 
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        if (intent.action == "com.esadigitallabs.esago.ACTION_SHOW_COPY_DIALOG") {
-            val lecturerName = intent.getStringExtra("lecturer_name")
-            val channel = MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, CHANNEL)
-            channel.invokeMethod("showCopyDialog", lecturerName)
+                if (appWidgetManager.isRequestPinAppWidgetSupported) {
+                    appWidgetManager.requestPinAppWidget(myProvider, null, null)
+                    result.success(true)
+                } else {
+                    result.success(false)
+                }
+            } else {
+                result.notImplemented()
+            }
         }
     }
 }

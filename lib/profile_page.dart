@@ -9,6 +9,7 @@ import 'package:esago/sso_page.dart';
 import 'package:esago/widget_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,6 +29,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  static const platform = MethodChannel('com.esadigitallabs.esago/widget');
+
   Uint8List? _imageData;
 
   @override
@@ -75,6 +78,30 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Future<void> _requestPinWidget() async {
+    try {
+      await platform.invokeMethod('requestPinWidget');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Permintaan untuk menambahkan widget telah dikirim. Silakan periksa layar utama Anda.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } on PlatformException catch (e) {
+      debugPrint("Failed to pin widget: '${e.message}'.");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal menambahkan widget: ${e.message}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } 
+  }
+
   @override
   Widget build(BuildContext context) {
     final profile = widget.siakadData.profile;
@@ -90,6 +117,11 @@ class _ProfilePageState extends State<ProfilePage> {
             backgroundColor: const Color(0xFF0A1931),
             elevation: 0,
             actions: [
+              IconButton(
+                icon: const Icon(Icons.add_to_home_screen),
+                tooltip: 'Tambah Widget',
+                onPressed: _requestPinWidget,
+              ),
               IconButton(
                 icon: const Icon(Icons.logout),
                 tooltip: 'Logout',

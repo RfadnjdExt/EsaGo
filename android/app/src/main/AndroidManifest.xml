@@ -33,7 +33,7 @@
         </activity>
 
         <receiver
-            android:name=".ScheduleWidgetProvider"
+            android:name="com.esadigitallabs.esago.ScheduleWidgetProvider"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -51,7 +51,7 @@
         </receiver>
 
         <service
-            android:name=".ScheduleWidgetService"
+            android:name="com.esadigitallabs.esago.ScheduleWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS"
             android:exported="false" />
 

@@ -16,11 +16,21 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Background isolate login functions can be added here if needed
-
 @pragma('vm:entry-point')
-void backgroundCallback(Uri? uri) {
-  // Background logic
+void backgroundCallback(Uri? uri) async {
+  if (uri?.host == 'update_widget') {
+    final serviceStatusService = ServiceStatusService();
+    final moodleService = MoodleService(serviceStatusService: serviceStatusService);
+    final siakadService = SiakadService(moodleService);
+
+    try {
+      await moodleService.init();
+      final siakadData = await siakadService.fetchSiakadDataWithCookie();
+      await sendDataToWidget(siakadData.schedule);
+    } catch (e) {
+      debugPrint('[backgroundCallback] Failed to update widget: $e');
+    }
+  }
 }
 
 void main() async {
@@ -29,8 +39,7 @@ void main() async {
   await initializeDateFormatting('id_ID', null);
   
   final serviceStatusService = ServiceStatusService();
-  // Jalankan pengecekan status awal di latar belakang
-  serviceStatusService.checkAllServices(); // FIX: Kembalikan ke checkAllServices
+  serviceStatusService.checkAllServices();
 
   runApp(MyApp(serviceStatusService: serviceStatusService));
 }
@@ -113,6 +122,9 @@ class _AuthCheckState extends State<AuthCheck> {
 
   void _navigateToProfile(SiakadData siakadData) {
     if (!mounted) return;
+    sendDataToWidget(siakadData.schedule).then((_) {
+      HomeWidget.updateWidget(name: 'ScheduleWidgetProvider', iOSName: 'ScheduleWidgetProvider');
+    });
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => ProfilePage(siakadData: siakadData, moodleService: _moodleService)),

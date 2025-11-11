@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:esago/forgot_password_page.dart';
 import 'package:esago/models/siakad_data.dart';
 import 'package:esago/profile_page.dart';
@@ -99,21 +100,17 @@ class _SsoFormContentState extends State<_SsoFormContent> {
     SiakadData? siakadData;
 
     try {
-      // 1. Cek ulang status semua layanan untuk data terbaru
       await statusService.checkAllServices();
       if (!mounted) return;
 
-      // 2. Coba login Moodle jika statusnya online
       if (statusService.isElearningOnline) {
         try {
           await _moodleService.login(username, password);
         } catch (moodleError) {
-          // Abaikan error Moodle, cukup catat dan lanjutkan
           debugPrint("Moodle login failed but proceeding: $moodleError");
         }
       }
 
-      // 3. Coba login via SSO jika statusnya online
       if (statusService.ssoStatus == ServiceStatus.online) {
         try {
           siakadData = await _siakadService.loginSsoAndFetchData(username, password);
@@ -122,12 +119,10 @@ class _SsoFormContentState extends State<_SsoFormContent> {
         }
       }
 
-      // 4. Fallback ke Siakad jika data belum didapat
       if (siakadData == null) {
         siakadData = await _siakadService.fetchSiakadData(username, password);
       }
 
-      // 5. Jika masih gagal, berarti login memang tidak berhasil
       if (siakadData == null) {
         throw Exception('Login gagal. Periksa kembali NIM dan password Anda.');
       }
